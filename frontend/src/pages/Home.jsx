@@ -53,10 +53,8 @@ function Home() {
     <>
       <Navbar onSearch={handleSearch} />
 
-      <div className="pt-16 sm:pt-18 lg:pt-20 px-2 sm:px-4 md:px-6 lg:px-8">
-        <div
-          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-x-2 sm:gap-x-3 lg:gap-x-4 gap-y-3 sm:gap-y-4"
-        >
+      <div className="pt-20 sm:pt-20 lg:pt-20 px-2 sm:px-4 md:px-6 lg:px-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-x-2 gap-y-3.5 sm:gap-x-3 lg:gap-x-4 gap-y-3 sm:gap-y-4">
           {loading ? (
             Array.from({ length: 8 }).map((_, index) => (
               <MovieCardSkeleton key={index} />
