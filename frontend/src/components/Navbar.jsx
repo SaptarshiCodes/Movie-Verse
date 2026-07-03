@@ -1,11 +1,34 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link } from "react-router";
 
-function Navbar() {
+function Navbar({ onSearch }) {
   const [showSearch, setShowSearch] = useState(false);
+  const [query, setQuery] = useState("");
+
+  const inputRef = useRef(null);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSearch(query.trim());
+  };
+
+  const handleSearchClick = () => {
+    if (!showSearch) {
+      setShowSearch(true);
+
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 0);
+
+      return;
+    }
+
+    onSearch(query.trim());
+    setShowSearch(false);
+  };
 
   return (
-    <div className="navbar bg-base-100 shadow-sm">
+    <div className="navbar fixed top-0 left-0 w-full px-2 sm:px-4 md:px-6 lg:px-8 z-50 bg-base-100 shadow-sm">
       {/* Navbar Start */}
       <div className="navbar-start">
         <div className="dropdown">
@@ -52,18 +75,24 @@ function Navbar() {
       <div className="navbar-end gap-2">
         {/* Search */}
         <div className="relative">
-          <input
-            type="text"
-            placeholder="Search movies..."
-            className={`input input-bordered absolute right-0 top-1/2 -translate-y-1/2 transition-all duration-300 pr-12 ${
-              showSearch
-                ? "w-72 opacity-100 pointer-events-auto"
-                : "w-0 opacity-0 pointer-events-none border-0 p-0"
-            }`}
-          />
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              placeholder="Search movies..."
+              ref={inputRef}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className={`input input-bordered absolute right-0 top-1/2 -translate-y-1/2 transition-all duration-300
+              ${
+                showSearch
+                  ? "w-55 sm:w-60 md:w-70 lg:w-80 opacity-100 pointer-events-auto"
+                  : "w-0 opacity-0 pointer-events-none border-0 p-0"
+              }`}
+            />
+          </form>
 
           <button
-            onClick={() => setShowSearch(!showSearch)}
+            onClick={handleSearchClick}
             className="btn btn-ghost btn-circle relative z-10"
           >
             <svg
