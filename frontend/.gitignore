@@ -11,6 +11,9 @@ node_modules
 dist
 dist-ssr
 /.next/
+/.next-e2e/
+/test-results/
+/playwright-report/
 /out/
 /build/
 *.local
@@ -30,3 +33,5 @@ dist-ssr
 
 skills-lock.json
 .agents/
+
+Project Interview.md

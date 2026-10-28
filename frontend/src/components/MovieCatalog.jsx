@@ -6,6 +6,7 @@ import { ArrowDown, ArrowLeft, ArrowRight } from "lucide-react";
 import MovieCard from "@/components/MovieCard";
 import MovieCardSkeleton from "@/components/MovieCardSkeleton";
 import { imageUrl } from "@/lib/movie-utils";
+import { fetchMovieResults } from "@/lib/movie-api";
 
 function startSpotlightTransition(setChanging, timerRef) {
   setChanging(true);
@@ -47,12 +48,7 @@ export default function MovieCatalog({ mode, query = "", genre = "", title, show
     if (mode === "search" && query) params.set("query", query);
     if (genre) params.set("genre", genre);
 
-    fetch(`/api/movies?${params}`, { signal: controller.signal })
-      .then(async (response) => {
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || "Could not load movies.");
-        return data;
-      })
+    fetchMovieResults(`/api/movies?${params}`, controller.signal)
       .then((data) => {
         setCatalog({
           key: catalogKey,
@@ -170,9 +166,7 @@ export default function MovieCatalog({ mode, query = "", genre = "", title, show
     if (genre) params.set("genre", genre);
     setCatalog((current) => ({ ...current, loadingMore: true, error: "" }));
     try {
-      const response = await fetch(`/api/movies?${params}`);
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Could not load more movies.");
+      const data = await fetchMovieResults(`/api/movies?${params}`);
       setCatalog((current) => {
         if (current.key !== requestKey) return current;
         const ids = new Set(current.movies.map((movie) => movie.id));

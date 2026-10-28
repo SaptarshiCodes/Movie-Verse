@@ -585,12 +585,29 @@ input:focus-visible {
   background: #171717;
 }
 
+.poster-loading {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, #171717 30%, #24211d 48%, #171717 66%);
+  background-size: 220% 100%;
+  animation: poster-shimmer 1.6s ease-in-out infinite;
+}
+
 .movie-poster {
   display: block;
+  position: relative;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 300ms cubic-bezier(0.2, 0.7, 0.2, 1), filter 220ms ease;
+  opacity: 0;
+  transition:
+    opacity 200ms ease,
+    transform 300ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    filter 220ms ease;
+}
+
+.movie-poster-loaded {
+  opacity: 1;
 }
 
 .poster-link:hover .movie-poster {
@@ -601,13 +618,25 @@ input:focus-visible {
 .poster-fallback {
   display: grid;
   width: 100%;
-  aspect-ratio: 2 / 3;
-  place-items: center;
-  padding: 14px;
+  height: 100%;
+  align-content: center;
+  justify-items: center;
+  gap: 10px;
+  padding: 18px;
   background: #171717;
   color: #d7d2c8;
   font-size: 14px;
   text-align: center;
+}
+
+.poster-fallback-note {
+  color: #aaa49a;
+  font-size: 11px;
+}
+
+@keyframes poster-shimmer {
+  from { background-position: 100% 0; }
+  to { background-position: -120% 0; }
 }
 
 .poster-rating {
@@ -993,12 +1022,165 @@ input:focus-visible {
   font-weight: 600;
 }
 
+.detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .detail-overview {
   max-width: 680px;
   margin: 0 0 24px;
   color: #d1cec7;
   font-size: 14px;
   line-height: 1.8;
+}
+
+.detail-section {
+  margin-top: 45px;
+  padding-top: 24px;
+  border-top: 1px solid #30302d;
+}
+
+.detail-section > h2 {
+  margin: 0 0 20px;
+  color: #f0eee9;
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.detail-section-note {
+  margin: -10px 0 18px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.movie-facts {
+  display: grid;
+  max-width: 820px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 34px;
+  margin: 0;
+}
+
+.movie-facts > div {
+  display: grid;
+  grid-template-columns: minmax(110px, 0.65fr) minmax(0, 1.35fr);
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #292927;
+}
+
+.movie-facts dt {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.movie-facts dd {
+  margin: 0;
+  color: #e2dfd8;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.cast-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  gap: 18px 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cast-member {
+  display: grid;
+  align-content: start;
+  gap: 5px;
+  min-width: 0;
+  color: #e5e2dc;
+  font-size: 12px;
+}
+
+.cast-photo {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  margin-bottom: 4px;
+  background: #191918;
+  object-fit: cover;
+}
+
+.cast-photo-image {
+  object-fit: cover;
+}
+
+.cast-photo-empty {
+  border: 1px solid #30302d;
+}
+
+.cast-member strong,
+.cast-member span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cast-member span {
+  color: var(--muted);
+}
+
+.audience-reviews {
+  max-width: 850px;
+}
+
+.audience-review {
+  padding: 20px 0;
+  border-bottom: 1px solid #292927;
+}
+
+.audience-review:first-child {
+  padding-top: 0;
+}
+
+.review-heading {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.review-heading h3 {
+  margin: 0;
+  color: #e9e6df;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.review-rating {
+  color: #f1d29a;
+  font-size: 12px;
+}
+
+.review-date {
+  margin: 5px 0 12px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.review-content {
+  margin: 0 0 12px;
+  color: #d1cec7;
+  font-size: 14px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+.detail-empty {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
 }
 
 .tmdb-credit {
@@ -1187,10 +1369,14 @@ input:focus-visible {
   }
 
   .discovery-hero {
-    min-height: 365px;
-    align-items: flex-end;
+    display: grid;
+    min-height: 420px;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: stretch;
+    align-content: end;
     margin-bottom: 30px;
-    padding: 25px 20px;
+    padding: 22px;
+    gap: 18px;
   }
 
   .discovery-backdrop {
@@ -1204,50 +1390,53 @@ input:focus-visible {
   }
 
   .hero-copy {
-    width: 100%;
+    width: min(100%, 36rem);
   }
 
   .hero-context {
+    margin-bottom: 11px;
     font-size: 12px;
   }
 
-  .hero-copy h1,
   .catalog-heading h1 {
     font-size: clamp(36px, 10vw, 48px);
   }
 
+  .hero-copy h1 {
+    max-width: 12ch;
+    font-size: clamp(36px, 10vw, 44px);
+    text-wrap: balance;
+  }
+
   .hero-description {
-    max-width: 350px;
-    margin: 14px 0 18px;
-    font-size: 13px;
+    max-width: 34ch;
+    margin: 13px 0 17px;
+    font-size: 14px;
+    line-height: 1.65;
   }
 
   .hero-actions {
-    gap: 14px;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
   }
 
   .hero-actions .button {
-    min-height: 38px;
+    min-height: 44px;
     padding-inline: 13px;
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .hero-reel {
     display: none;
   }
 
-  .discovery-hero {
-    min-height: 430px;
-    grid-template-columns: minmax(0, 1fr);
-    align-content: end;
-    gap: 15px;
-  }
-
   .spotlight-caption {
     width: 100%;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    padding: 11px 13px;
+    gap: 12px;
+    padding: 11px 14px;
   }
 
   .spotlight-movie {
@@ -1261,12 +1450,12 @@ input:focus-visible {
   }
 
   .spotlight-controls {
-    gap: 5px;
+    gap: 6px;
   }
 
   .spotlight-arrow {
-    width: 34px;
-    height: 34px;
+    width: 40px;
+    height: 40px;
   }
 
   .section-heading {
@@ -1425,6 +1614,45 @@ input:focus-visible {
     padding-inline: 11px;
     font-size: 11px;
   }
+
+  .detail-section {
+    margin-top: 32px;
+    padding-top: 19px;
+  }
+
+  .detail-section > h2 {
+    margin-bottom: 15px;
+    font-size: 18px;
+  }
+
+  .movie-facts {
+    grid-template-columns: 1fr;
+  }
+
+  .movie-facts > div {
+    grid-template-columns: minmax(95px, 0.55fr) minmax(0, 1.45fr);
+    gap: 9px;
+    padding: 10px 0;
+  }
+
+  .movie-facts dt,
+  .movie-facts dd {
+    font-size: 12px;
+  }
+
+  .cast-list {
+    grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+    gap: 14px 10px;
+  }
+
+  .audience-review {
+    padding: 16px 0;
+  }
+
+  .review-content {
+    font-size: 13px;
+    line-height: 1.7;
+  }
 }
 
 @media (max-width: 390px) {
@@ -1433,14 +1661,8 @@ input:focus-visible {
   }
 
   .discovery-hero {
-    min-height: 355px;
-    padding: 21px 17px;
-  }
-
-  .hero-actions {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 12px;
+    min-height: 410px;
+    padding: 20px 17px;
   }
 
   .section-heading > .text-link {

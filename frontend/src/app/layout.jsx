@@ -1,6 +1,7 @@
 import "./globals.css";
 import AppProviders from "@/components/AppProviders";
 import Navbar from "@/components/Navbar";
+import { headers } from "next/headers";
 
 export const metadata = {
   title: {
@@ -12,7 +13,9 @@ export const metadata = {
   applicationName: "Movie Verse",
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  await headers();
+
   return (
     <html lang="en">
       <body>
