@@ -1,54 +1,51 @@
-function MovieCard({ movie }) {
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import { Heart } from "lucide-react";
+import { useFavorites } from "@/components/AppProviders";
+import { imageUrl } from "@/lib/movie-utils";
+
+export default function MovieCard({ movie }) {
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const poster = imageUrl(movie.poster_path, "w500");
+  const saved = isFavorite(movie.id);
+  const year = movie.release_date?.slice(0, 4);
+
   return (
-    <div className="hover-3d">
-    <div
-      className="group card w-full max-w-[200px] sm:max-w-[200px] md:max-w-[220px] lg:max-w-[280px]
-      h-[360px] sm:h-[380px] md:h-[400px]
-      bg-base-200 shadow-lg
-      flex flex-col mx-auto cursor-pointer
-      transition-all duration-300 ease-out
-      hover:-translate-y-2 hover:scale-[1.03]
-      hover:shadow-2xl hover:bg-base-300 border border-transparent
-      hover:border-primary"
-    >
-      <figure className="flex-1 px-2 sm:px-3 pt-2 sm:pt-3 pb-1 overflow-hidden">
-        <img
-          src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-          alt={movie.title}
-          className="w-full h-full object-cover rounded-xl
-             transition-transform duration-300
-             group-hover:scale-110"
-        />
-      </figure>
-
-      <div className="card-body flex-none pt-0 pb-2 px-2 sm:px-3 gap-1 items-center text-center">
-        <h2 className="card-title text-base sm:text-lg leading-tight line-clamp-2 mt-1 transition-colors duration-300 group-hover:text-primary">
-          {movie.title}
-        </h2>
-
-        <p className="text-[11px] sm:text-xs text-gray-500">
-          {movie.release_date?.split("-")[0]}
-        </p>
-
-        <button
-          className="btn btn-primary btn-xs sm:btn-sm mt-1 mb-2
-             transition-all duration-300
-             group-hover:scale-105"
-        >
-          Watch Now
-        </button>
+    <article className="movie-card">
+      <Link className="poster-link" href={`/movie/${movie.id}`} aria-label={`View ${movie.title}`}>
+        {poster ? (
+          <Image
+            alt={`${movie.title} poster`}
+            className="movie-poster"
+            height={750}
+            loading="lazy"
+            sizes="(max-width: 600px) 44vw, (max-width: 1000px) 28vw, 220px"
+            src={poster}
+            unoptimized
+            width={500}
+          />
+        ) : (
+          <span className="poster-fallback">{movie.title}</span>
+        )}
+        {movie.vote_average > 0 ? (
+          <span className="poster-rating">★ {movie.vote_average.toFixed(1)}</span>
+        ) : null}
+      </Link>
+      <button
+        aria-label={saved ? `Remove ${movie.title} from My list` : `Save ${movie.title} to My list`}
+        aria-pressed={saved}
+        className={`favorite-button${saved ? " favorite-active" : ""}`}
+        onClick={() => toggleFavorite(movie)}
+        type="button"
+      >
+        <Heart size={17} fill={saved ? "currentColor" : "none"} />
+      </button>
+      <div className="movie-card-copy">
+        <Link href={`/movie/${movie.id}`} className="movie-title">{movie.title}</Link>
+        <span className="movie-year">{year || "Release date unavailable"}</span>
       </div>
-      </div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-    </div>
+    </article>
   );
 }
-
-export default MovieCard;

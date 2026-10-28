@@ -1,16 +1,26 @@
-# React + Vite
+# Movie Verse
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Movie Verse is a movie-discovery frontend built with the Next.js App Router. It
+includes discovery, search, genre browsing, movie details, an about page, and a
+personal favorites list stored in the visitor's browser.
 
-Currently, two official plugins are available:
+## Run locally
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+1. Install Node.js 20.9 or newer.
+2. Copy `.env.example` to `.env.local` and add a TMDB API key.
+3. Run `npm install`, then `npm run dev`.
+4. Open `http://localhost:3000`.
 
-## React Compiler
+The TMDB key is read only by server-side route handlers. Do not prefix it with
+`NEXT_PUBLIC_` or commit an environment file. If you have used a TMDB key that
+was committed previously, revoke it and create a replacement.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Commands
 
-## Expanding the ESLint configuration
+- `npm run dev` — start the Next.js development server.
+- `npm run build` — create a production build.
+- `npm start` — serve the production build.
+- `npm run lint` — run the Next.js ESLint configuration.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Movie data and artwork are provided by [The Movie Database](https://www.themoviedb.org/).
+Favorites are saved locally in the current browser and are not synced between devices.

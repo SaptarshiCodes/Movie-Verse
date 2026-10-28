@@ -1,140 +1,110 @@
-import { useState, useRef } from "react";
-import { Link } from "react-router";
+"use client";
 
-function Navbar({ onSearch }) {
-  const [showSearch, setShowSearch] = useState(false);
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { Film, Heart, Search, Clapperboard, Info } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useFavorites } from "@/components/AppProviders";
+
+const links = [
+  { href: "/", label: "Discover", Icon: Clapperboard },
+  { href: "/browse", label: "Browse", Icon: Film },
+  { href: "/favorites", label: "My list", Icon: Heart },
+  { href: "/about", label: "About", Icon: Info },
+];
+
+export default function Navbar() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const { favorites } = useFavorites();
   const [query, setQuery] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  const inputRef = useRef(null);
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+    document.addEventListener("keydown", closeOnEscape);
+    return () => document.removeEventListener("keydown", closeOnEscape);
+  }, [menuOpen]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSearch(query.trim());
-  };
-
-  const handleSearchClick = () => {
-    if (!showSearch) {
-      setShowSearch(true);
-
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 0);
-
-      return;
-    }
-
-    onSearch(query.trim());
-    setShowSearch(false);
-  };
+  function submitSearch(event) {
+    event.preventDefault();
+    const search = query.trim().slice(0, 100);
+    router.push(search ? `/search?query=${encodeURIComponent(search)}` : "/");
+    setMenuOpen(false);
+  }
 
   return (
-    <div className="navbar fixed top-0 left-0 w-full px-2 sm:px-4 md:px-6 lg:px-8 z-50 bg-base-100 shadow-sm">
-      {/* Navbar Start */}
-      <div className="navbar-start">
-        <div className="dropdown">
-          <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+    <>
+      <aside className={`sidebar${menuOpen ? " sidebar-open" : ""}`}>
+        <Link className="brand" href="/" onClick={() => setMenuOpen(false)}>
+          <span className="brand-mark" aria-hidden="true"><Film size={19} strokeWidth={2.2} /></span>
+          <span>Movie Verse</span>
+        </Link>
+        <nav className="side-nav" id="primary-navigation" aria-label="Main navigation">
+          <p className="nav-heading">Your cinema</p>
+          {links.map(({ href, label, Icon }) => (
+            <Link
+              aria-current={pathname === href ? "page" : undefined}
+              className={`nav-link${pathname === href ? " nav-link-active" : ""}`}
+              href={href}
+              key={href}
+              onClick={() => setMenuOpen(false)}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h16M4 18h7"
-              />
-            </svg>
+              <Icon size={18} aria-hidden="true" />
+              <span>{label}</span>
+              {href === "/favorites" && favorites.length > 0 ? (
+                <span className="nav-count">{favorites.length}</span>
+              ) : null}
+            </Link>
+          ))}
+        </nav>
+        <div className="sidebar-bottom">
+          <div className="ticket-note">
+            <span className="ticket-perforation" aria-hidden="true" />
+            <p>Every film opens a different world.</p>
           </div>
-
-          <ul
-            tabIndex={-1}
-            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-10 mt-3 w-52 p-2 shadow"
-          >
-            <li>
-              <Link to="/">Homepage</Link>
-            </li>
-            <li>
-              <Link to="/favourites">Favourites</Link>
-            </li>
-            <li>
-              <a>About</a>
-            </li>
-          </ul>
+          <span className="sidebar-credit">A little more wonder, one story at a time.</span>
         </div>
-      </div>
-
-      {/* Navbar Center */}
-      <div className="navbar-center">
-        <a className="btn btn-ghost text-xl font-bold">MOVIE VERSE</a>
-      </div>
-
-      {/* Navbar End */}
-      <div className="navbar-end gap-2">
-        {/* Search */}
-        <div className="relative">
-          <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              placeholder="Search movies..."
-              ref={inputRef}
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className={`input input-bordered absolute right-0 top-1/2 -translate-y-1/2 transition-all duration-300
-              ${
-                showSearch
-                  ? "w-55 sm:w-60 md:w-70 lg:w-80 opacity-100 pointer-events-auto"
-                  : "w-0 opacity-0 pointer-events-none border-0 p-0"
-              }`}
-            />
-          </form>
-
-          <button
-            onClick={handleSearchClick}
-            className="btn btn-ghost btn-circle relative z-10"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </button>
-        </div>
-
-        {/* Notification */}
-        <button className="btn btn-ghost btn-circle">
-          <div className="indicator">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-              />
-            </svg>
-            <span className="badge badge-xs badge-primary indicator-item"></span>
-          </div>
+      </aside>
+      {menuOpen ? (
+        <button
+          aria-label="Close navigation menu"
+          className="sidebar-scrim"
+          onClick={() => setMenuOpen(false)}
+        />
+      ) : null}
+      <header className="topbar">
+        <button
+          aria-expanded={menuOpen}
+          aria-controls="primary-navigation"
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          className="menu-toggle"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          <span /><span />
         </button>
-      </div>
-    </div>
+        <form className="top-search" onSubmit={submitSearch} role="search">
+          <Search size={18} aria-hidden="true" />
+          <input
+            aria-label="Search movies"
+            autoComplete="off"
+            maxLength={100}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search movie titles..."
+            type="search"
+            value={query}
+          />
+          <kbd>Enter</kbd>
+        </form>
+        <Link className="topbar-list" href="/favorites" aria-label={`My list, ${favorites.length} saved movies`}>
+          <Heart size={18} aria-hidden="true" />
+          <span>My list</span>
+          {favorites.length ? <span className="topbar-count">{favorites.length}</span> : null}
+        </Link>
+      </header>
+    </>
   );
 }
-
-export default Navbar;
